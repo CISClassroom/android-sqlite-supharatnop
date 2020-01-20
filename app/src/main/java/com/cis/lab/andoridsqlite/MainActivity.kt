@@ -28,15 +28,26 @@ class MainActivity : AppCompatActivity() {
             data!!.moveToFirst()
 
             textView.text = ""
-            textView.append(data.getString(data.getColumnIndex("taskname")))
-
-            while (data.moveToNext()){
+            do{
+                val taskname = data.getString(data.getColumnIndex("taskname"))
+                val id = data.getString(data.getColumnIndex("id"))
+                textView.append(id + ")" + taskname)
                 textView.append("\n")
-                textView.append(data.getString(data.getColumnIndex("taskname")))
-            }
+            }while (data.moveToNext())
             data.close()
         }
-
+        button_delete.setOnClickListener{
+            val input = editText2.text.toString()
+            val dbHelper = DBHelper(this ,DB_NAME, null, 1 )
+            val result = dbHelper.deleteTask(input.toInt())
+        }
+        button_edit.setOnClickListener{
+            val input = editText2.text.toString()
+            val datas = input.split(",")
+            val task = Task(datas[0].toInt(),datas[1])
+            val dbHelper = DBHelper(this,DB_NAME,null, 1 )
+            val result = dbHelper.updateTask(task)
+        }
 
     }
 }

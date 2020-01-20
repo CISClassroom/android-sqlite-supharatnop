@@ -6,6 +6,7 @@ import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.view.View
+import androidx.core.content.contentValuesOf
 
 class DBHelper(
     context: Context?,
@@ -20,6 +21,28 @@ class DBHelper(
     val COLUMN_ID = "id"
     val COLUMN_TASKNAME = "taskname"
 
+
+
+    //update
+    fun updateTask(data:Task): Int {
+        val db =this.writableDatabase
+        val contentValues = ContentValues()
+        contentValues.put(COLUMN_TASKNAME,data.taskname)
+        val result = db.update(TABLE_NAME,contentValues,
+            COLUMN_ID + " = " + data.id, null)
+        db.close()
+        return result
+    }
+
+    //delete
+    fun deleteTask(id:Int): Int {
+        val db = this.writableDatabase
+        val result = db.delete(TABLE_NAME,
+            COLUMN_ID + " = " + id, null)
+        db.close()
+        return result
+    }
+
     fun addTask(newTask: Task){
         val values = ContentValues()
         values.put(COLUMN_TASKNAME,newTask.taskname)
@@ -31,11 +54,11 @@ class DBHelper(
     }
     fun getAllTask() : Cursor? {
         val db = this.readableDatabase
-        return db.rawQuery(" SELECT * FROM " + TABLE_NAME, null)
+        return db.rawQuery("SELECT * FROM " + TABLE_NAME, null)
     }
 
     override fun onCreate(db: SQLiteDatabase) {
-        val CREATE_TABLE = " CREATE TABLE " + TABLE_NAME + "(" + COLUMN_ID + " INTERGER PRIMARY KEY, "+
+        val CREATE_TABLE = " CREATE TABLE " + TABLE_NAME + " ( " + COLUMN_ID + " INTEGER PRIMARY KEY,"+
                 COLUMN_TASKNAME + " TEXT )"
         db.execSQL(CREATE_TABLE)
     }
